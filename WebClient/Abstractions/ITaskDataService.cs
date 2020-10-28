@@ -25,5 +25,7 @@ namespace WebClient.Abstractions
         void SelectTask(Guid id);
         Task ToggleTask(Guid id);
         Task AddTask(TaskVm model);
+        Task AssignToMember(Guid id);
+
     }
 }

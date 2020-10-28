@@ -69,6 +69,11 @@ namespace WebClient.Services
            var task = _tasks.First(x => x.Id == id);
            task.IsComplete = !task.IsComplete;
 
+            await PersistUpdatedTask(task);
+        }
+
+        private async Task PersistUpdatedTask(TaskVm task)
+        {
             var result = await Update(task.ToUpdateTaskCommand());
 
             Console.WriteLine(JsonSerializer.Serialize(result));
@@ -83,7 +88,9 @@ namespace WebClient.Services
                     TasksUpdated?.Invoke(this, null);
                     return;
                 }
-                UpdateTaskFailed?.Invoke(this, "The save was successful, but we can no longer get an updated list of tasks from the server.");
+
+                UpdateTaskFailed?.Invoke(this,
+                    "The save was successful, but we can no longer get an updated list of tasks from the server.");
             }
 
             UpdateTaskFailed?.Invoke(this, "Unable to save changes.");
@@ -105,6 +112,12 @@ namespace WebClient.Services
                 UpdateTaskFailed?.Invoke(this, "The creation was successful, but we can no longer get an updated list of tasks from the server.");
             }
             UpdateTaskFailed?.Invoke(this, "Unable to create record.");
+        }
+
+        public async Task AssignToMember(Guid memberId)
+        {
+            SelectedTask.AssignedToId = memberId;
+            await PersistUpdatedTask(SelectedTask);
         }
     }
 }

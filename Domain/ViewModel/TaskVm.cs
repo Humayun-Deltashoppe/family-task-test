@@ -9,6 +9,6 @@ namespace Domain.ViewModel
         public string Subject { get; set; }
         public bool IsComplete { get; set; }
         public Guid? AssignedToId { get; set; }
-
+        public string AssignedToAvatar { get; set; }
     }
 }

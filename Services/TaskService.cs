@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-    public class TaskService : ITaskService
+    public class TaskService: ITaskService
     {
 
         private readonly ITaskRepository _taskRepository;
@@ -28,7 +28,6 @@ namespace Services
         {
             var task = _mapper.Map<Domain.DataModels.Task>(command);
             var persistedTask = await _taskRepository.CreateRecordAsync(task);
-
             var vm = _mapper.Map<TaskVm>(persistedTask);
 
             return new CreateTaskCommandResult()
@@ -38,14 +37,15 @@ namespace Services
         }
         public async Task<UpdateTaskCommandResult> UpdateTaskCommandHandler(UpdateTaskCommand command)
         {
-            
+            var isSucceed = true;
             var task = await _taskRepository.ByIdAsync(command.Id);
 
             _mapper.Map<UpdateTaskCommand, Domain.DataModels.Task>(command, task);
 
             var affectedRecordsCount = await _taskRepository.UpdateRecordAsync(task);
 
-            var isSucceed = affectedRecordsCount > 1;
+            if (affectedRecordsCount < 1)
+                isSucceed = false;
 
             return new UpdateTaskCommandResult()
             {
@@ -56,9 +56,8 @@ namespace Services
         public async Task<GetAllTasksQueryResult> GetAllTasksQueryHandler()
         {
             IEnumerable<TaskVm> vm = new List<TaskVm>();
-            
 
-            var tasks = await _taskRepository.Reset().ToListAsync();
+            var tasks = await _taskRepository.GetAllTasks();//Reset().ToListAsync();
 
             if (tasks != null && tasks.Any())
                 vm = _mapper.Map<IEnumerable<TaskVm>>(tasks);

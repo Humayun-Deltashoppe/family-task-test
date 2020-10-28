@@ -12,7 +12,6 @@ namespace WebApi.Validators.Commands
         public UpdateTaskCommandValidator()
         {
             RuleFor(x => x.Subject).NotNull().NotEmpty();
-
         }
     }
 }

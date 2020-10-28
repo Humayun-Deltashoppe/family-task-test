@@ -11,7 +11,12 @@ namespace WebApi.AutoMapper
         {
             CreateMap<CreateTaskCommand, Task>();
             CreateMap<UpdateTaskCommand, Task>();
-            CreateMap<Task, TaskVm>();
+            CreateMap<Task, TaskVm>()
+                .ForMember(
+                         dest => dest.AssignedToAvatar,
+                         opt => opt.MapFrom(src => src.Member.Avatar)
+                    );
+
 
         }
     }
